@@ -12,6 +12,21 @@ import ListarContratadas from './components/ListarContratadas';
 import ListarGestaoContrato from './components/ListarGestaoContrato';
 import Dashboard from './components/Dashboard';
 
+// ✅ Criação automática do admin se nenhum usuário existir
+function inicializarAdmin() {
+  const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+  if (usuarios.length === 0) {
+    const admin = {
+      nome: 'admin',
+      email: 'admin@ses.mg.gov.br',
+      senha: '123456',
+      tipo: 'admin'
+    };
+    localStorage.setItem('usuarios', JSON.stringify([admin]));
+    console.log('Admin criado automaticamente');
+  }
+}
+
 function App() {
   const [usuarioLogado, setUsuarioLogado] = useState(
     JSON.parse(localStorage.getItem('usuarioLogado'))
@@ -23,18 +38,7 @@ function App() {
   });
 
   useEffect(() => {
-    // Criação automática do primeiro administrador
-    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-    if (usuarios.length === 0) {
-      usuarios.push({
-        nome: 'Admin',
-        email: 'admin@admin.com',
-        senha: 'admin123',
-        tipo: 'admin'
-      });
-      localStorage.setItem('usuarios', JSON.stringify(usuarios));
-      console.log('Usuário administrador criado automaticamente');
-    }
+    inicializarAdmin(); // ✅ Executa a criação do admin
   }, []);
 
   useEffect(() => {

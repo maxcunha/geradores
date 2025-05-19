@@ -1,5 +1,18 @@
 import React, { useState } from 'react';
 
+useEffect(() => {
+  const usuariosSalvos = JSON.parse(localStorage.getItem('usuarios')) || [];
+  if (usuariosSalvos.length === 0) {
+    const admin = {
+      nome: 'admin',
+      email: 'admin@ses.mg.gov.br',
+      senha: '123456',
+      tipo: 'admin'
+    };
+    localStorage.setItem('usuarios', JSON.stringify([admin]));
+  }
+}, []);
+
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');

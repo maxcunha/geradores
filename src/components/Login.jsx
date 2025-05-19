@@ -1,44 +1,31 @@
-import React, { useState, useEffect } from 'react';
+// src/components/Login.jsx
+import React, { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [erro, setErro] = useState('');
 
-  const handleLogin = () => {
-    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-    const encontrado = usuarios.find(u => u.email === email && u.senha === senha);
-
-    if (encontrado) {
-      localStorage.setItem('usuarioLogado', JSON.stringify(encontrado));
-      if (onLogin) onLogin(encontrado);
+  const handleLogin = async () => {
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, senha);
+      const usuario = {
+        uid: cred.user.uid,
+        email: cred.user.email,
+        nome: cred.user.displayName || 'Usuário',
+        tipo: 'usuario'
+      };
+      localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+      if (onLogin) onLogin(usuario);
       window.location.href = '/?aba=dashboard';
-    } else {
-      setErro('Usuário ou senha inválidos');
-    }
-  };
-
-  // ✅ Criar admin manualmente (botão)
-  const criarAdmin = () => {
-    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-    const jaExiste = usuarios.find(u => u.email === 'admin@ses.mg.gov.br');
-
-    if (!jaExiste) {
-      usuarios.push({
-        nome: 'admin',
-        email: 'admin@ses.mg.gov.br',
-        senha: '123456',
-        tipo: 'admin'
-      });
-      localStorage.setItem('usuarios', JSON.stringify(usuarios));
-      alert('Usuário admin criado com sucesso!');
-    } else {
-      alert('O usuário admin já existe.');
+    } catch (erro) {
+      alert('Usuário ou senha inválidos');
     }
   };
 
   return (
-    <div className="max-w-sm mx-auto bg-white p-6 rounded shadow mt-10">
+    <div className="max-w-sm mx-auto bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold mb-4 text-center">Login</h2>
       <input
         type="email"
@@ -54,21 +41,11 @@ function Login({ onLogin }) {
         placeholder="Senha"
         className="border px-4 py-2 rounded w-full mb-4"
       />
-
-      {erro && <p className="text-red-600 text-sm mb-2">{erro}</p>}
-
       <button
         onClick={handleLogin}
-        className="bg-blue-600 text-white px-4 py-2 rounded w-full mb-2"
+        className="bg-blue-600 text-white px-4 py-2 rounded w-full"
       >
         Entrar
-      </button>
-
-      <button
-        onClick={criarAdmin}
-        className="bg-green-600 text-white px-4 py-2 rounded w-full text-sm"
-      >
-        Criar Usuário Admin
       </button>
     </div>
   );

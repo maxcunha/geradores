@@ -1,4 +1,3 @@
-// src/components/Login.jsx
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -9,18 +8,17 @@ function Login({ onLogin }) {
 
   const handleLogin = async () => {
     try {
-      const cred = await signInWithEmailAndPassword(auth, email, senha);
-      const usuario = {
-        uid: cred.user.uid,
-        email: cred.user.email,
-        nome: cred.user.displayName || 'Usuário',
-        tipo: 'usuario'
-      };
-      localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
-      if (onLogin) onLogin(usuario);
+      const usuario = await signInWithEmailAndPassword(auth, email, senha);
+      localStorage.setItem('usuarioLogado', JSON.stringify({
+        nome: usuario.user.displayName || 'Usuário',
+        email: usuario.user.email,
+        tipo: 'admin' // ajuste se for usar perfis diferentes
+      }));
+      if (onLogin) onLogin(usuario.user);
       window.location.href = '/?aba=dashboard';
-    } catch (erro) {
+    } catch (error) {
       alert('Usuário ou senha inválidos');
+      console.error(error);
     }
   };
 

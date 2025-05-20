@@ -1,10 +1,10 @@
-// src/firebase.js
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+/// src/firebase.js
+
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBIZiatdToHUKLQbrOg0NAHD_8JEK9SGbA",
+  apiKey: "AIzaSyBIziatdToHUKLQbrOg0NAHD_8JEK9SGbA",
   authDomain: "manutencao-equipamentos.firebaseapp.com",
   projectId: "manutencao-equipamentos",
   storageBucket: "manutencao-equipamentos.appspot.com",
@@ -13,6 +13,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+export { auth };
